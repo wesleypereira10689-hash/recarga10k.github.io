@@ -8,24 +8,215 @@
 <style>
 body {
   margin: 0;
-  font-family: Arial;
+  font-family: Arial, sans-serif;
   background: #050b18;
   color: white;
+  overflow: hidden;
 }
 
+/* estrelas */
+.stars {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+}
+
+.star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: white;
+  animation: fall linear infinite;
+}
+
+@keyframes fall {
+  from { transform: translateY(-10px); opacity: 1; }
+  to { transform: translateY(100vh); opacity: 0; }
+}
+
+/* container */
 .container {
-  padding: 20px;
+  width: 100%;
+  height: 100vh;
+  position: relative;
+}
+
+/* box */
+.box {
+  margin: 80px auto;
+  padding: 25px;
+  width: 90%;
+  max-width: 320px;
+  background: rgba(0,0,0,0.6);
+  border-radius: 15px;
+  border: 1px solid #0af;
+  box-shadow: 0 0 25px #0af;
   text-align: center;
+}
+
+/* steps animados */
+.step {
+  position: absolute;
+  width: 100%;
+  opacity: 0;
+  transform: translateX(100%);
+  transition: 0.4s ease;
+}
+
+.step.active {
+  opacity: 1;
+  transform: translateX(0);
+  position: relative;
+}
+
+.step.exit {
+  transform: translateX(-100%);
+  opacity: 0;
+}
+
+/* botões */
+button {
+  margin-top: 20px;
+  padding: 15px;
+  width: 100%;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  color: white;
+  cursor: pointer;
+}
+
+.btn-blue { background: linear-gradient(45deg,#005eff,#00c3ff); }
+.btn-green { background: linear-gradient(45deg,#00c853,#64dd17); }
+
+/* loader */
+.loader {
+  display: none;
+  margin-top: 15px;
+}
+
+.bar-bg {
+  height: 5px;
+  background: #333;
+  margin-top: 5px;
+}
+
+.bar {
+  height: 5px;
+  width: 0%;
+}
+
+/* imagem */
+img {
+  width: 100%;
+  border-radius: 10px;
+  margin-top: 10px;
 }
 </style>
 </head>
 
 <body>
 
+<div class="stars" id="stars"></div>
+
 <div class="container">
-  <h1>🔥 Seu site está no ar!</h1>
-  <p>Se você está vendo isso, funcionou.</p>
+
+<!-- STEP 1 -->
+<div id="step1" class="step active">
+  <div class="box">
+    <h2>CONTA GEMADA</h2>
+    <p>Iniciando varredura no sistema...</p>
+
+    <button class="btn-blue" onclick="startLoading(1)">RESGATAR AGORA</button>
+
+    <div id="loader1" class="loader">
+      <p id="text1">0%</p>
+      <div class="bar-bg">
+        <div id="bar1" class="bar" style="background:#00aaff;"></div>
+      </div>
+    </div>
+  </div>
 </div>
+
+<!-- STEP 2 -->
+<div id="step2" class="step">
+  <div class="box">
+    <h2>CONTA ENCONTRADA</h2>
+
+    <img src="https://picsum.photos/300">
+
+    <button class="btn-green" onclick="startLoading(2)">DESBLOQUEAR CONTA</button>
+
+    <div id="loader2" class="loader">
+      <p id="text2">0%</p>
+      <div class="bar-bg">
+        <div id="bar2" class="bar" style="background:#00c853;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+// estrelas
+function createStars(){
+  let s = document.getElementById("stars");
+  for(let i=0;i<70;i++){
+    let star = document.createElement("div");
+    star.className="star";
+    star.style.left=Math.random()*100+"vw";
+    star.style.animationDuration=(2+Math.random()*3)+"s";
+    s.appendChild(star);
+  }
+}
+createStars();
+
+// troca animada
+function nextStep(current,next){
+  let c = document.getElementById(current);
+  let n = document.getElementById(next);
+
+  c.classList.remove("active");
+  c.classList.add("exit");
+
+  setTimeout(()=>{
+    n.classList.add("active");
+  },200);
+}
+
+// loading
+function startLoading(step){
+  let loader = document.getElementById("loader"+step);
+  let bar = document.getElementById("bar"+step);
+  let text = document.getElementById("text"+step);
+
+  loader.style.display = "block";
+
+  let percent = 0;
+
+  let interval = setInterval(()=>{
+    percent += Math.floor(Math.random()*12);
+
+    if(percent >= 100){
+      percent = 100;
+      clearInterval(interval);
+
+      if(step == 1){
+        nextStep("step1","step2");
+      }
+
+      if(step == 2){
+        window.location.href = "https://www.tiktok.com/d/1/ZS9R4pBSeFNTJ-dmBlm/";
+      }
+    }
+
+    bar.style.width = percent + "%";
+    text.innerText = percent + "%";
+
+  },250);
+}
+</script>
 
 </body>
 </html>
